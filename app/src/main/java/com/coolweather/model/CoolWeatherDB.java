@@ -145,11 +145,4 @@ public class CoolWeatherDB {
 
     }
 
-
-
-
-
-
-
-
 }
