@@ -42,6 +42,7 @@ public class HttpUtil {
                         //回调onFinish()方法
                         Log.e(ChooseAreaActivity.TAG,"回调方法");
                         listener.onFinish(response.toString());
+                        Log.e(ChooseAreaActivity.TAG, "回调成功");
                     }
 
                 } catch (Exception e) {
@@ -49,6 +50,7 @@ public class HttpUtil {
                         //回调onError方法
                         Log.e(ChooseAreaActivity.TAG,"回调方法");
                         listener.onError(e);
+                        Log.e(ChooseAreaActivity.TAG, "回调出错"+e);
                     }
                 } finally {
                     if (connection!=null){

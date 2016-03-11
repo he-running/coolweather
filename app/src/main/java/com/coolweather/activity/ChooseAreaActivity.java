@@ -2,7 +2,10 @@ package com.coolweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -56,6 +59,19 @@ public class ChooseAreaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //开机先执行这一段，先查看是否已存在天气情况
+        SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getBoolean("city_selected",false)){
+
+            Log.e(TAG,"进入WeatherActivity！");
+            Intent intent=new Intent(this,WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        Log.e(TAG,"还没进入WeatherActivity！");
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
 
@@ -77,10 +93,22 @@ public class ChooseAreaActivity extends Activity {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(index);
                     queryCounties();
+                }else if (currentLevel==LEVEL_COUNTY){
+
+                    Log.e(TAG,"进入else if县级");
+                    String countyCode=countyList.get(index).getCountyCode();
+                    Intent intent =new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+                    intent.putExtra("county_code",countyCode);
+
+                    Log.e(TAG, ""+countyCode);
+
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
         queryProvinces();//加载省级数据
+
     }
 
     /**
@@ -147,7 +175,7 @@ public class ChooseAreaActivity extends Activity {
     /**
      * 根据输入的代号和类型从服务器上查询省市县数据
      */
-    private void queryFromServer(final String code, final String type) {
+     private void queryFromServer(final String code, final String type) {
 
         String address;
         if (!TextUtils.isEmpty(code)) {
