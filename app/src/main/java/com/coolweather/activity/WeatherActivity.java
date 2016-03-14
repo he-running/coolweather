@@ -1,6 +1,7 @@
 package com.coolweather.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,6 +9,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,7 +18,7 @@ import com.coolweather.util.HttpCallbackListener;
 import com.coolweather.util.HttpUtil;
 import com.coolweather.util.Utility;
 
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity implements View.OnClickListener {
 
     private LinearLayout weatherInforLayout;
     private TextView cityNameText;//显示城市名
@@ -26,11 +28,15 @@ public class WeatherActivity extends Activity {
     private TextView temp2Text;//显示气温2
     private TextView currentDateText;//显示当前日期
 
+    private Button switchCity;//切换城市
+    private Button refreshWeather;//更新天气
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.weather_layout);
+
         //初始化各控件
         weatherInforLayout= (LinearLayout) findViewById(R.id.weather_info_layout);
         publishText= (TextView) findViewById(R.id.publish_text);
@@ -39,6 +45,12 @@ public class WeatherActivity extends Activity {
         temp1Text= (TextView) findViewById(R.id.temp1);
         temp2Text= (TextView) findViewById(R.id.temp2);
         currentDateText= (TextView) findViewById(R.id.current_date);
+
+        switchCity= (Button) findViewById(R.id.switch_city);
+        refreshWeather= (Button) findViewById(R.id.refresh_weather);
+        switchCity.setOnClickListener(this);
+        refreshWeather.setOnClickListener(this);
+
 
         String countyCode=getIntent().getStringExtra("county_code");
 
@@ -151,4 +163,46 @@ public class WeatherActivity extends Activity {
         weatherInforLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+
+            case R.id.switch_city:
+                Intent intent=new Intent(this,ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.refresh_weather:
+                publishText.setText("正在更新...");
+                SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(this);
+                String weatherCode=preferences.getString("weather_code","");
+                if (!TextUtils.isEmpty(weatherCode)){
+                    queryWeatherInfo(weatherCode);
+                }
+                break;
+            default:
+                break;
+
+
+        }
+
+
+
+
+
+
+    }
+
+  
+
+
+
+
+
+
+
+
 }
