@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.coolweather.R;
+import com.coolweather.service.AutoUpdateService;
 import com.coolweather.util.HttpCallbackListener;
 import com.coolweather.util.HttpUtil;
 import com.coolweather.util.Utility;
@@ -158,10 +159,14 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         temp2Text.setText(preferences.getString("temp2",""));
         weatherDespText.setText(preferences.getString("weather_desp",""));
         publishText.setText("今天"+preferences.getString("publish_time","")+"发布");
-        currentDateText.setText(preferences.getString("current_date",""));
+        currentDateText.setText(preferences.getString("current_date", ""));
 
         weatherInforLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
+
+        Intent intent=new Intent(this, AutoUpdateService.class);
+        startService(intent);
+
     }
 
     @Override
